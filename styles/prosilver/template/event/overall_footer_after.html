@@ -1,0 +1,147 @@
+<style>
+.post-vote-btn.voted-up i {
+    color: #1a73e8 !important;
+}
+.post-vote-btn.voted-down i {
+    color: #d93025 !important;
+}
+.post-vote-btn i {
+    transition: transform 0.15s ease-in-out, color 0.15s ease-in-out;
+}
+.post-vote-btn:hover i {
+    transform: scale(1.15);
+}
+.post-votes-container {
+    margin-top: 10px;
+    padding: 4px 10px;
+    font-size: 12px;
+    color: #444;
+    background: #fbfbfb;
+    border: 1px solid #e2e2e2;
+    border-radius: 4px;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s ease;
+}
+.post-vote-badge {
+    display: inline-flex;
+    align-items: center;
+    font-weight: 600;
+}
+.post-upvote-badge i {
+    color: #1a73e8;
+    margin-right: 4px;
+}
+.post-downvote-badge i {
+    color: #d93025;
+    margin-right: 4px;
+}
+</style>
+
+<script>
+(function() {
+    'use strict';
+
+    // Use event delegation on document so clicks work even on dynamically cloned mobile menus
+    document.addEventListener('click', function(e) {
+        var btn = e.target.closest ? e.target.closest('.post-vote-btn') : null;
+        if (!btn) {
+            return;
+        }
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (btn.getAttribute('data-loading') === '1') {
+            return;
+        }
+
+        var url = btn.getAttribute('href');
+        var postId = btn.getAttribute('data-post-id');
+
+        var allPostButtons = document.querySelectorAll('.post-vote-btn[data-post-id="' + postId + '"]');
+        allPostButtons.forEach(function(b) {
+            b.setAttribute('data-loading', '1');
+            b.style.opacity = '0.6';
+        });
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(function(response) {
+            if (!response.ok) {
+                return response.json().then(function(err) {
+                    throw new Error(err.message || 'Server error');
+                });
+            }
+            return response.json();
+        })
+        .then(function(data) {
+            allPostButtons.forEach(function(b) {
+                b.removeAttribute('data-loading');
+                b.style.opacity = '';
+            });
+
+            if (data.success) {
+                var upButtons = document.querySelectorAll('.post-vote-up[data-post-id="' + postId + '"]');
+                var downButtons = document.querySelectorAll('.post-vote-down[data-post-id="' + postId + '"]');
+
+                upButtons.forEach(function(upBtn) {
+                    if (data.user_vote === 1) {
+                        upBtn.classList.add('voted-up');
+                    } else {
+                        upBtn.classList.remove('voted-up');
+                    }
+                    upBtn.setAttribute('title', data.up_label);
+                    var label = upBtn.querySelector('.vote-label');
+                    if (label) {
+                        label.textContent = data.up_label;
+                    }
+                });
+
+                downButtons.forEach(function(downBtn) {
+                    if (data.user_vote === -1) {
+                        downBtn.classList.add('voted-down');
+                    } else {
+                        downBtn.classList.remove('voted-down');
+                    }
+                    downBtn.setAttribute('title', data.down_label);
+                    var label = downBtn.querySelector('.vote-label');
+                    if (label) {
+                        label.textContent = data.down_label;
+                    }
+                });
+
+                var container = document.getElementById('post-votes-' + postId);
+                var upCounter = document.getElementById('post-upvotes-count-' + postId);
+                var downCounter = document.getElementById('post-downvotes-count-' + postId);
+
+                if (upCounter) {
+                    upCounter.textContent = data.upvotes;
+                }
+                if (downCounter) {
+                    downCounter.textContent = data.downvotes;
+                }
+                if (container) {
+                    container.style.display = (data.upvotes > 0 || data.downvotes > 0) ? 'inline-flex' : 'none';
+                }
+            } else if (data.message) {
+                alert(data.message);
+            }
+        })
+        .catch(function(err) {
+            allPostButtons.forEach(function(b) {
+                b.removeAttribute('data-loading');
+                b.style.opacity = '';
+            });
+            console.error('Post vote error:', err);
+            if (err.message) {
+                alert(err.message);
+            }
+        });
+    });
+})();
+</script>

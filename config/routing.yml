@@ -1,0 +1,7 @@
+usctzen_postvote_vote:
+    path: /postvote/{post_id}/{direction}
+    defaults: { _controller: usctzen.postvote.controller:vote }
+    methods: [GET, POST]
+    requirements:
+        post_id: \d+
+        direction: up|down

@@ -1,0 +1,14 @@
+{% if postrow.S_CAN_VOTE %}
+    <li data-skip-responsive="true">
+        <a href="{{ postrow.U_VOTE_UP }}" class="button button-icon-only post-vote-btn post-vote-up{% if postrow.S_USER_UPVOTED %} voted-up{% endif %}" title="{% if postrow.S_USER_UPVOTED %}{{ lang('POST_REMOVE_UPVOTE') }}{% else %}{{ lang('POST_UPVOTE') }}{% endif %}" data-post-id="{{ postrow.POST_ID }}" data-direction="up" role="button">
+            <i class="icon fa-thumbs-up fa-fw" aria-hidden="true"></i>
+            <span class="sr-only vote-label">{% if postrow.S_USER_UPVOTED %}{{ lang('POST_REMOVE_UPVOTE') }}{% else %}{{ lang('POST_UPVOTE') }}{% endif %}</span>
+        </a>
+    </li>
+    <li data-skip-responsive="true">
+        <a href="{{ postrow.U_VOTE_DOWN }}" class="button button-icon-only post-vote-btn post-vote-down{% if postrow.S_USER_DOWNVOTED %} voted-down{% endif %}" title="{% if postrow.S_USER_DOWNVOTED %}{{ lang('POST_REMOVE_DOWNVOTE') }}{% else %}{{ lang('POST_DOWNVOTE') }}{% endif %}" data-post-id="{{ postrow.POST_ID }}" data-direction="down" role="button">
+            <i class="icon fa-thumbs-down fa-fw" aria-hidden="true"></i>
+            <span class="sr-only vote-label">{% if postrow.S_USER_DOWNVOTED %}{{ lang('POST_REMOVE_DOWNVOTE') }}{% else %}{{ lang('POST_DOWNVOTE') }}{% endif %}</span>
+        </a>
+    </li>
+{% endif %}

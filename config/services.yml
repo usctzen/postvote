@@ -1,0 +1,21 @@
+services:
+    usctzen.postvote.controller:
+        class: usctzen\postvote\controller\vote_controller
+        arguments:
+            - '@user'
+            - '@dbal.conn'
+            - '@request'
+            - '%core.table_prefix%'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+
+    usctzen.postvote.listener:
+        class: usctzen\postvote\event\main_listener
+        arguments:
+            - '@user'
+            - '@template'
+            - '@dbal.conn'
+            - '@controller.helper'
+            - '%core.table_prefix%'
+        tags:
+            - { name: event.listener }

@@ -1,0 +1,10 @@
+<div class="post-votes-container" id="post-votes-{{ postrow.POST_ID }}" style="display: {% if postrow.S_POST_HAS_VOTES %}inline-flex{% else %}none{% endif %};">
+    <span class="post-vote-badge post-upvote-badge" title="{{ lang('POST_UPVOTES') }}">
+        <i class="fa fa-thumbs-up" aria-hidden="true"></i>
+        <span class="post-upvotes-count" id="post-upvotes-count-{{ postrow.POST_ID }}">{{ postrow.POST_UPVOTES_COUNT }}</span>
+    </span>
+    <span class="post-vote-badge post-downvote-badge" title="{{ lang('POST_DOWNVOTES') }}">
+        <i class="fa fa-thumbs-down" aria-hidden="true"></i>
+        <span class="post-downvotes-count" id="post-downvotes-count-{{ postrow.POST_ID }}">{{ postrow.POST_DOWNVOTES_COUNT }}</span>
+    </span>
+</div>
